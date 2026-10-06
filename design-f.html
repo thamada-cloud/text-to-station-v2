@@ -665,7 +665,11 @@
 
       <!-- ═══ PUSH PRIMER ═══ -->
       <sc-if value="{{ isPrimer }}" hint-placeholder-val="{{ false }}">
-      <div style="flex:1; min-height:0; display:flex; flex-direction:column; background:#f6f8f9;">
+      <div style="flex:1; min-height:0; display:flex; flex-direction:column; background:#f6f8f9; position:relative;">
+        <!-- Close, same as the success screen's X (acts like Maybe Later) -->
+        <div onClick="{{ finishFlow }}" style="position:absolute; top:16px; right:16px; z-index:2; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+          <svg width="24" height="24" viewBox="0 0 24 24"><path d="M18.3 5.71C17.91 5.32 17.28 5.32 16.89 5.71L12 10.59L7.11 5.7C6.72 5.31 6.09 5.31 5.7 5.7C5.31 6.09 5.31 6.72 5.7 7.11L10.59 12L5.7 16.89C5.31 17.28 5.31 17.91 5.7 18.3C6.09 18.69 6.72 18.69 7.11 18.3L12 13.41L16.89 18.3C17.28 18.69 17.91 18.69 18.3 18.3C18.69 17.91 18.69 17.28 18.3 16.89L13.41 12L18.3 7.11C18.68 6.73 18.68 6.09 18.3 5.71Z" fill="#27292d"></path></svg>
+        </div>
         <div class="hide-sb" style="overflow-y:auto; flex:1; min-height:0; display:flex; flex-direction:column; justify-content:center;">
           <div style="display:flex; flex-direction:column; align-items:center; gap:16px; padding:24px 16px;">
             <p style="margin:0; font-weight:600; font-size:32px; line-height:40px; letter-spacing:-0.5px; color:#27292d; text-align:center;">Want to hear back from your favorite stations?</p>
