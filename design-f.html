@@ -578,6 +578,20 @@
       <!-- ═══ RECORDER (design-c voice flow, reused as is) ═══ -->
       <sc-if value="{{ isRecorder }}" hint-placeholder-val="{{ false }}">
       <div style="flex:1; min-height:0; display:flex; flex-direction:column; overflow:hidden; position:relative; background:#f6f8f9;">
+        <!-- Tap to record (Figma Messaging / Talkback / Default) -->
+        <sc-if value="{{ isVoiceIdle }}" hint-placeholder-val="{{ true }}">
+        <div style="flex:1; min-height:0; display:flex; flex-direction:column; background:#000; position:relative;">
+        <div onMouseDown="{{ closeRecorder }}" style="position:absolute; top:16px; right:16px; z-index:2; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer;"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M18.3 5.71C17.91 5.32 17.28 5.32 16.89 5.71L12 10.59L7.11 5.7C6.72 5.31 6.09 5.31 5.7 5.7C5.31 6.09 5.31 6.72 5.7 7.11L10.59 12L5.7 16.89C5.31 17.28 5.31 17.91 5.7 18.3C6.09 18.69 6.72 18.69 7.11 18.3L12 13.41L16.89 18.3C17.28 18.69 17.91 18.69 18.3 18.3C18.69 17.91 18.69 17.28 18.3 16.89L13.41 12L18.3 7.11C18.68 6.73 18.68 6.09 18.3 5.71Z" fill="#fff"></path></svg></div>
+        <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:24px; padding:60px 40px 0;">
+          <canvas ref="{{ vIdleCanvasRef }}" width="528" height="84" style="width:264px; height:42px;"></canvas>
+          <p style="margin:0; font-size:16px; line-height:18px; color:#fff; text-align:center;">Tap to record and send a message to<br><span style="font-weight:600;">Z100</span></p>
+        </div>
+        <div style="padding:24px 16px 88px; display:flex; justify-content:center;">
+          <div onMouseDown="{{ startVoiceRec }}" style="width:64px; height:64px; cursor:pointer;"><svg width="64" height="64" viewBox="0 0 64 64" fill="none"><g id="record_circle"><path id="stop circle" fill-rule="evenodd" clip-rule="evenodd" d="M32 64C49.6731 64 64 49.6731 64 32C64 14.3269 49.6731 0 32 0C14.3269 0 0 14.3269 0 32C0 49.6731 14.3269 64 32 64Z" fill="white"/><path id="stop circle_2" fill-rule="evenodd" clip-rule="evenodd" d="M39.6667 23H26.3333C24.5 23 23 24.5 23 26.3333V39.6667C23 41.5 24.5 43 26.3333 43H39.6667C41.5 43 43 41.5 43 39.6667V26.3333C43 24.5 41.5 23 39.6667 23Z" fill="white"/><circle id="Ellipse 14" cx="32" cy="32" r="10" fill="#C6002B"/></g></svg></div>
+        </div>
+        </div>
+        </sc-if>
+
         <sc-if value="{{ isVoiceCountdown }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex; flex-direction:column; height:100dvh; max-height:100%; background:#f6f8f9;">
   <div style="display:flex; justify-content:flex-end; padding:8px 12px 0;">
@@ -814,6 +828,7 @@ class Component extends DCLogic {
     this.vCanvasRef = React.createRef();
     this.vRecordedCanvasRef = React.createRef();
     this.vCountdownCanvasRef = React.createRef();
+    this.vIdleCanvasRef = React.createRef();
     this._collapsed = false;
     this.state = {
       screen: (props && props.startScreen) || "station",
@@ -887,6 +902,7 @@ class Component extends DCLogic {
     this.applyAccent();
     this.hydrateImgs();
     if (this.state.voiceRec === "countdown" && this.vCountdownCanvasRef.current) { this._vDrawStatic(this.vCountdownCanvasRef.current, -1, false); }
+    if (this.state.voiceRec === "idle" && this.vIdleCanvasRef.current) { this._vDrawStatic(this.vIdleCanvasRef.current, 1, true, true); }
     const el = this.chatRef.current;
     if (el) el.scrollTop = el.scrollHeight;
   }
@@ -959,7 +975,7 @@ class Component extends DCLogic {
     return this._staticLevels;
   }
 
-  _vDrawStatic(canvas, progress, opaque) {
+  _vDrawStatic(canvas, progress, opaque, onDark) {
     if (!canvas) return;
     const ctx = canvas.getContext("2d"); const W = canvas.width, H = canvas.height;
     ctx.clearRect(0, 0, W, H);
@@ -969,7 +985,7 @@ class Component extends DCLogic {
     const pIdx = Math.round((progress || 0) * data.length);
     for (let i = 0; i < data.length; i++) {
       const lit = opaque || i <= pIdx;
-      ctx.fillStyle = lit ? "rgba(107,112,117,0.95)" : "rgba(107,112,117,0.28)";
+      ctx.fillStyle = onDark ? "rgba(255,255,255,0.85)" : (lit ? "rgba(107,112,117,0.95)" : "rgba(107,112,117,0.28)");
       const h = Math.max(3, data[i] * H); const x = i * step; const y = (H - h) / 2; const r = barW / 2;
       ctx.beginPath(); ctx.moveTo(x, y + r); ctx.arcTo(x, y, x + r, y, r); ctx.arcTo(x + barW, y, x + barW, y + r, r); ctx.lineTo(x + barW, y + h - r); ctx.arcTo(x + barW, y + h, x + r, y + h, r); ctx.arcTo(x, y + h, x, y + h - r, r); ctx.closePath(); ctx.fill();
     }
@@ -1065,8 +1081,8 @@ class Component extends DCLogic {
   }
 
   openRecorder() {
-    this.setState({ view: "recorder" });
-    this._beginCountdown();
+    this.discardVoiceRec();
+    this.setState({ view: "recorder", voiceRec: "idle" });
   }
 
   resetFlow() {
@@ -1185,6 +1201,7 @@ class Component extends DCLogic {
       vCanvasRef: this.vCanvasRef,
       vRecordedCanvasRef: this.vRecordedCanvasRef,
       vCountdownCanvasRef: this.vCountdownCanvasRef,
+      vIdleCanvasRef: this.vIdleCanvasRef,
       startVoiceRec: (e) => { if (e && e.preventDefault) e.preventDefault(); this.startVoiceRec(); },
       discardVoiceRec: (e) => { if (e && e.preventDefault) e.preventDefault(); this.closeRecorder(); },
       showMicPrompt: s.showMicPrompt === true,
@@ -1193,7 +1210,7 @@ class Component extends DCLogic {
       denyMic: () => this.setState({ showMicPrompt: false, showMicDisabled: true }),
       showMicDisabled: s.showMicDisabled === true,
       closeMicDisabled: () => this.setState({ showMicDisabled: false }),
-      cancelCountdown: (e) => { if (e && e.preventDefault) e.preventDefault(); this.closeRecorder(); },
+      cancelCountdown: (e) => { if (e && e.preventDefault) e.preventDefault(); if (this._cdTimer) { clearInterval(this._cdTimer); this._cdTimer = null; } this.setState({ voiceRec: "idle", vCountdown: 3, vSeconds: 0 }); },
       stopVoiceRec: (e) => { if (e && e.preventDefault) e.preventDefault(); this.stopVoiceRec(); },
       playVoiceRec: (e) => { if (e && e.preventDefault) e.preventDefault(); this.playVoiceRec(); },
       sendVoiceRec: (e) => { if (e && e.preventDefault) e.preventDefault(); this.sendVoiceRec(); },
