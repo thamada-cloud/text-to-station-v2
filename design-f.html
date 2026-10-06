@@ -27,6 +27,10 @@
   .tb-notif-drop { transform-origin: 50% 0; animation: tbNotifDrop .75s cubic-bezier(.22,1,.36,1) .6s both; }
   @media (prefers-reduced-motion: reduce) { .tb-notif-drop { animation: tbFadeOnly .4s ease .3s both; } }
   @keyframes tbFadeOnly { from { opacity: 0; } to { opacity: 1; } }
+  /* Recording rings: same 1.6s scale up and down as design-c's tbpulse1/2, starting from the Figma ring color */
+  @keyframes tbRingOuter { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.18); opacity: 0.45; } }
+  @keyframes tbRingInner { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.12); opacity: 0.57; } }
+  @media (prefers-reduced-motion: reduce) { .tb-ring { animation: none !important; } }
   @keyframes tbpop { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes tbmarquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
   @keyframes tbpulse1 { 0%,100% { transform: scale(1); opacity: 0.55; } 50% { transform: scale(1.18); opacity: 0.25; } }
@@ -603,8 +607,8 @@
           </div>
           <div style="position:absolute; left:0; right:0; bottom:88px; display:flex; justify-content:center;">
             <div style="position:relative; width:64px; height:64px; display:flex; align-items:center; justify-content:center;">
-              <div style="position:absolute; width:128px; height:128px; border-radius:999px; background:rgba(113,114,119,0.2);"></div>
-              <div style="position:absolute; width:96px; height:96px; border-radius:999px; background:rgba(113,114,119,0.2);"></div>
+              <div class="tb-ring" style="position:absolute; width:128px; height:128px; border-radius:999px; background:rgba(113,114,119,0.2); animation:tbRingOuter 1.6s ease-in-out infinite;"></div>
+              <div class="tb-ring" style="position:absolute; width:96px; height:96px; border-radius:999px; background:rgba(113,114,119,0.2); animation:tbRingInner 1.6s ease-in-out infinite;"></div>
               <div onMouseDown="{{ stopVoiceRec }}" style="position:relative; padding:4px; border-radius:999px; background:#c6002b; box-shadow:0 1px 1.5px rgba(255,255,255,0.12); display:flex; cursor:pointer;"><svg width="56" height="56" viewBox="0 0 56 56" fill="none"><path d="M21 17.5H35C36.925 17.5 38.5 19.075 38.5 21V35C38.5 36.925 36.925 38.5 35 38.5H21C19.075 38.5 17.5 36.925 17.5 35V21C17.5 19.075 19.075 17.5 21 17.5Z" fill="white"></path></svg></div>
             </div>
           </div>
