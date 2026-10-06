@@ -585,10 +585,10 @@
           <div onMouseDown="{{ closeRecorder }}" style="position:absolute; top:16px; right:16px; z-index:2; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer;"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M18.3 5.71C17.91 5.32 17.28 5.32 16.89 5.71L12 10.59L7.11 5.7C6.72 5.31 6.09 5.31 5.7 5.7C5.31 6.09 5.31 6.72 5.7 7.11L10.59 12L5.7 16.89C5.31 17.28 5.31 17.91 5.7 18.3C6.09 18.69 6.72 18.69 7.11 18.3L12 13.41L16.89 18.3C17.28 18.69 17.91 18.69 18.3 18.3C18.69 17.91 18.69 17.28 18.3 16.89L13.41 12L18.3 7.11C18.68 6.73 18.68 6.09 18.3 5.71Z" fill="#fff"></path></svg></div>
           <div style="position:absolute; left:50%; top:calc(50% + 30px); transform:translate(-50%,-50%); width:295px; display:flex; flex-direction:column; align-items:center; gap:24px;">
             <canvas ref="{{ vCountdownCanvasRef }}" width="528" height="84" style="width:264px; height:42px;"></canvas>
-            <div style="height:36px; display:flex; align-items:center; justify-content:center;"><p style="margin:0; font-weight:600; font-size:18px; line-height:24px; color:#fff; text-align:center; font-variant-numeric:tabular-nums;">Recording in {{ vCountdown }}</p></div>
+            <div style="height:36px; display:flex; align-items:center; justify-content:center;"><p style="margin:0; font-weight:600; font-size:24px; line-height:30px; color:#fff; text-align:center; font-variant-numeric:tabular-nums;">{{ vCountdown }}</p></div>
           </div>
           <div style="position:absolute; left:0; right:0; bottom:88px; display:flex; justify-content:center;">
-            <div onMouseDown="{{ cancelCountdown }}" style="width:64px; height:64px; border-radius:999px; background:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer;"><svg width="22" height="22" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3" fill="#C6002B"></rect></svg></div>
+            <div onMouseDown="{{ cancelCountdown }}" style="position:relative; padding:4px; border-radius:999px; background:#c6002b; box-shadow:0 1px 1.5px rgba(255,255,255,0.12); display:flex; cursor:pointer;"><svg width="56" height="56" viewBox="0 0 56 56" fill="none"><path d="M21 17.5H35C36.925 17.5 38.5 19.075 38.5 21V35C38.5 36.925 36.925 38.5 35 38.5H21C19.075 38.5 17.5 36.925 17.5 35V21C17.5 19.075 19.075 17.5 21 17.5Z" fill="white"></path></svg></div>
           </div>
         </div>
         </sc-if>
@@ -599,13 +599,13 @@
           <div onMouseDown="{{ closeRecorder }}" style="position:absolute; top:16px; right:16px; z-index:2; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer;"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M18.3 5.71C17.91 5.32 17.28 5.32 16.89 5.71L12 10.59L7.11 5.7C6.72 5.31 6.09 5.31 5.7 5.7C5.31 6.09 5.31 6.72 5.7 7.11L10.59 12L5.7 16.89C5.31 17.28 5.31 17.91 5.7 18.3C6.09 18.69 6.72 18.69 7.11 18.3L12 13.41L16.89 18.3C17.28 18.69 17.91 18.69 18.3 18.3C18.69 17.91 18.69 17.28 18.3 16.89L13.41 12L18.3 7.11C18.68 6.73 18.68 6.09 18.3 5.71Z" fill="#fff"></path></svg></div>
           <div style="position:absolute; left:50%; top:calc(50% + 30px); transform:translate(-50%,-50%); width:295px; display:flex; flex-direction:column; align-items:center; gap:24px;">
             <canvas ref="{{ vCanvasRef }}" width="528" height="84" style="width:264px; height:42px;"></canvas>
-            <div style="height:36px; display:flex; align-items:center; justify-content:center;"><p style="margin:0; font-weight:600; font-size:18px; line-height:24px; color:#fff; text-align:center; font-variant-numeric:tabular-nums;">Time remaining {{ vRemaining }}</p></div>
+            <div style="height:36px; display:flex; align-items:center; justify-content:center;"><p style="margin:0; font-weight:400; font-size:16px; line-height:20px; color:#fff; text-align:center; font-variant-numeric:tabular-nums;">Time remaining {{ vRemaining }}</p></div>
           </div>
           <div style="position:absolute; left:0; right:0; bottom:88px; display:flex; justify-content:center;">
             <div style="position:relative; width:64px; height:64px; display:flex; align-items:center; justify-content:center;">
-              <div style="position:absolute; width:112px; height:112px; border-radius:999px; background:rgba(255,255,255,0.10); animation:tbpulse1 1.6s ease-in-out infinite;"></div>
-              <div style="position:absolute; width:88px; height:88px; border-radius:999px; background:rgba(255,255,255,0.18); animation:tbpulse2 1.6s ease-in-out infinite;"></div>
-              <div onMouseDown="{{ stopVoiceRec }}" style="position:relative; width:64px; height:64px; border-radius:999px; background:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer;"><svg width="22" height="22" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3" fill="#C6002B"></rect></svg></div>
+              <div style="position:absolute; width:128px; height:128px; border-radius:999px; background:rgba(113,114,119,0.2);"></div>
+              <div style="position:absolute; width:96px; height:96px; border-radius:999px; background:rgba(113,114,119,0.2);"></div>
+              <div onMouseDown="{{ stopVoiceRec }}" style="position:relative; padding:4px; border-radius:999px; background:#c6002b; box-shadow:0 1px 1.5px rgba(255,255,255,0.12); display:flex; cursor:pointer;"><svg width="56" height="56" viewBox="0 0 56 56" fill="none"><path d="M21 17.5H35C36.925 17.5 38.5 19.075 38.5 21V35C38.5 36.925 36.925 38.5 35 38.5H21C19.075 38.5 17.5 36.925 17.5 35V21C17.5 19.075 19.075 17.5 21 17.5Z" fill="white"></path></svg></div>
             </div>
           </div>
         </div>
