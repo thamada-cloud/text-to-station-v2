@@ -624,23 +624,31 @@
         </div>
         </sc-if>
 
-        <!-- Review (design-c, Try Again / Send) -->
+        <!-- Review (design-c Try Again / Send; play sits in the same round-button slot) -->
         <sc-if value="{{ isVoiceRecorded }}" hint-placeholder-val="{{ false }}">
         <div style="position:absolute; inset:0;">
           <div onMouseDown="{{ closeRecorder }}" style="position:absolute; top:16px; right:16px; z-index:2; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer;"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M18.3 5.71C17.91 5.32 17.28 5.32 16.89 5.71L12 10.59L7.11 5.7C6.72 5.31 6.09 5.31 5.7 5.7C5.31 6.09 5.31 6.72 5.7 7.11L10.59 12L5.7 16.89C5.31 17.28 5.31 17.91 5.7 18.3C6.09 18.69 6.72 18.69 7.11 18.3L12 13.41L16.89 18.3C17.28 18.69 17.91 18.69 18.3 18.3C18.69 17.91 18.69 17.28 18.3 16.89L13.41 12L18.3 7.11C18.68 6.73 18.68 6.09 18.3 5.71Z" fill="#fff"></path></svg></div>
           <div style="position:absolute; left:50%; top:calc(50% + 30px); transform:translate(-50%,-50%); width:295px; display:flex; flex-direction:column; align-items:center; gap:24px;">
             <canvas ref="{{ vRecordedCanvasRef }}" width="528" height="84" style="width:264px; height:42px;"></canvas>
-            <div style="height:36px; display:flex; align-items:center; justify-content:center;"><div onMouseDown="{{ playVoiceRec }}" style="display:flex; align-items:center; gap:8px; height:36px; padding:0 16px 0 12px; border-radius:999px; background:#27292d; cursor:pointer;">
-              <sc-if value="{{ isVoicePlaying }}" hint-placeholder-val="{{ false }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><rect x="5" y="5" width="14" height="14" rx="3"></rect></svg></sc-if>
-              <sc-if value="{{ notVoicePlaying }}" hint-placeholder-val="{{ true }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"></path></svg></sc-if>
-              <span style="font-weight:600; font-size:14px; line-height:20px; color:#fff; font-variant-numeric:tabular-nums;">{{ vTime }}</span>
-            </div></div>
+            <div style="height:36px; display:flex; align-items:center; justify-content:center;"><p style="margin:0; font-weight:600; font-size:18px; line-height:24px; color:#fff; text-align:center; font-variant-numeric:tabular-nums;">{{ vTime }}</p></div>
           </div>
-          <div style="position:absolute; left:16px; right:16px; bottom:24px; display:flex; flex-direction:column; gap:10px;">
-            <div onMouseDown="{{ startVoiceRec }}" style="border:1px solid #fff; color:#fff; border-radius:999px; padding:12px; text-align:center; font-weight:600; font-size:16px; line-height:20px; cursor:pointer; box-sizing:border-box;">Try Again</div>
-            <div onMouseDown="{{ sendVoiceRec }}" style="background:var(--accent,#c6002b); color:#fff; border-radius:999px; padding:12px; text-align:center; font-weight:600; font-size:16px; line-height:20px; cursor:pointer; box-sizing:border-box;">Send</div>
-            <p style="margin:0; font-size:12px; line-height:16px; color:#a9afb2; text-align:center;">By sending, you agree to your recording being broadcast.</p>
+          <div style="position:absolute; left:0; right:0; bottom:88px; display:flex; justify-content:center;">
+            <div style="position:relative; width:64px; height:64px;">
+              <div onMouseDown="{{ playVoiceRec }}" style="width:64px; height:64px; border-radius:999px; background:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                <sc-if value="{{ isVoicePlaying }}" hint-placeholder-val="{{ false }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="#27292d"><rect x="5" y="5" width="14" height="14" rx="3"></rect></svg></sc-if>
+                <sc-if value="{{ notVoicePlaying }}" hint-placeholder-val="{{ true }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="#27292d"><path d="M8 5v14l11-7z"></path></svg></sc-if>
+              </div>
+              <div onMouseDown="{{ startVoiceRec }}" style="position:absolute; top:50%; width:72px; display:flex; flex-direction:column; align-items:center; gap:6px; transform:translateY(-24px); cursor:pointer; right:calc(50% + 52px);">
+              <div style="width:48px; height:48px; border-radius:999px; background:#27292d; display:flex; align-items:center; justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 1 0 2.34-5.66" stroke="#fff" stroke-width="2" stroke-linecap="round"></path><path d="M4 4v4.5h4.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+              <span style="font-weight:600; font-size:12px; line-height:16px; color:#fff; white-space:nowrap;">Try Again</span>
+            </div>
+              <div onMouseDown="{{ sendVoiceRec }}" style="position:absolute; top:50%; width:72px; display:flex; flex-direction:column; align-items:center; gap:6px; transform:translateY(-24px); cursor:pointer; left:calc(50% + 52px);">
+              <div style="width:48px; height:48px; border-radius:999px; background:var(--accent,#c6002b); display:flex; align-items:center; justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 19V5M5 12l7-7 7 7" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+              <span style="font-weight:600; font-size:12px; line-height:16px; color:#fff; white-space:nowrap;">Send</span>
+            </div>
+            </div>
           </div>
+          <p style="position:absolute; left:16px; right:16px; bottom:24px; margin:0; font-size:12px; line-height:16px; color:#a9afb2; text-align:center;">By sending, you agree to your recording being broadcast.</p>
         </div>
         </sc-if>
       </div>
