@@ -575,85 +575,71 @@
       </div>
       </sc-if>
 
-      <!-- ═══ RECORDER (design-c voice flow, reused as is) ═══ -->
+      <!-- ═══ RECORDER (dark; one shared layout so the waveform, line and button never move) ═══ -->
       <sc-if value="{{ isRecorder }}" hint-placeholder-val="{{ false }}">
-      <div style="flex:1; min-height:0; display:flex; flex-direction:column; overflow:hidden; position:relative; background:#f6f8f9;">
+      <div style="flex:1; min-height:0; position:relative; overflow:hidden; background:#000;">
         <!-- Tap to record (Figma Messaging / Talkback / Default) -->
         <sc-if value="{{ isVoiceIdle }}" hint-placeholder-val="{{ true }}">
-        <div style="flex:1; min-height:0; display:flex; flex-direction:column; background:#000; position:relative;">
-        <div onMouseDown="{{ closeRecorder }}" style="position:absolute; top:16px; right:16px; z-index:2; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer;"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M18.3 5.71C17.91 5.32 17.28 5.32 16.89 5.71L12 10.59L7.11 5.7C6.72 5.31 6.09 5.31 5.7 5.7C5.31 6.09 5.31 6.72 5.7 7.11L10.59 12L5.7 16.89C5.31 17.28 5.31 17.91 5.7 18.3C6.09 18.69 6.72 18.69 7.11 18.3L12 13.41L16.89 18.3C17.28 18.69 17.91 18.69 18.3 18.3C18.69 17.91 18.69 17.28 18.3 16.89L13.41 12L18.3 7.11C18.68 6.73 18.68 6.09 18.3 5.71Z" fill="#fff"></path></svg></div>
-        <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:24px; padding:60px 40px 0;">
-          <canvas ref="{{ vIdleCanvasRef }}" width="528" height="84" style="width:264px; height:42px;"></canvas>
-          <p style="margin:0; font-size:16px; line-height:18px; color:#fff; text-align:center;">Tap to record and send a message to<br><span style="font-weight:600;">Z100</span></p>
-        </div>
-        <div style="padding:24px 16px 88px; display:flex; justify-content:center;">
-          <div onMouseDown="{{ startVoiceRec }}" style="width:64px; height:64px; cursor:pointer;"><svg width="64" height="64" viewBox="0 0 64 64" fill="none"><g id="record_circle"><path id="stop circle" fill-rule="evenodd" clip-rule="evenodd" d="M32 64C49.6731 64 64 49.6731 64 32C64 14.3269 49.6731 0 32 0C14.3269 0 0 14.3269 0 32C0 49.6731 14.3269 64 32 64Z" fill="white"/><path id="stop circle_2" fill-rule="evenodd" clip-rule="evenodd" d="M39.6667 23H26.3333C24.5 23 23 24.5 23 26.3333V39.6667C23 41.5 24.5 43 26.3333 43H39.6667C41.5 43 43 41.5 43 39.6667V26.3333C43 24.5 41.5 23 39.6667 23Z" fill="white"/><circle id="Ellipse 14" cx="32" cy="32" r="10" fill="#C6002B"/></g></svg></div>
-        </div>
+        <div style="position:absolute; inset:0;">
+          <div onMouseDown="{{ closeRecorder }}" style="position:absolute; top:16px; right:16px; z-index:2; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer;"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M18.3 5.71C17.91 5.32 17.28 5.32 16.89 5.71L12 10.59L7.11 5.7C6.72 5.31 6.09 5.31 5.7 5.7C5.31 6.09 5.31 6.72 5.7 7.11L10.59 12L5.7 16.89C5.31 17.28 5.31 17.91 5.7 18.3C6.09 18.69 6.72 18.69 7.11 18.3L12 13.41L16.89 18.3C17.28 18.69 17.91 18.69 18.3 18.3C18.69 17.91 18.69 17.28 18.3 16.89L13.41 12L18.3 7.11C18.68 6.73 18.68 6.09 18.3 5.71Z" fill="#fff"></path></svg></div>
+          <div style="position:absolute; left:50%; top:calc(50% + 30px); transform:translate(-50%,-50%); width:295px; display:flex; flex-direction:column; align-items:center; gap:24px;">
+            <canvas ref="{{ vIdleCanvasRef }}" width="528" height="84" style="width:264px; height:42px;"></canvas>
+            <div style="height:36px; display:flex; align-items:center; justify-content:center;"><p style="margin:0; font-size:16px; line-height:18px; color:#fff; text-align:center;">Tap to record and send a message to<br><span style="font-weight:600;">Z100</span></p></div>
+          </div>
+          <div style="position:absolute; left:0; right:0; bottom:88px; display:flex; justify-content:center;">
+            <div onMouseDown="{{ startVoiceRec }}" style="width:64px; height:64px; cursor:pointer;"><svg width="64" height="64" viewBox="0 0 64 64" fill="none"><g id="record_circle"><path id="stop circle" fill-rule="evenodd" clip-rule="evenodd" d="M32 64C49.6731 64 64 49.6731 64 32C64 14.3269 49.6731 0 32 0C14.3269 0 0 14.3269 0 32C0 49.6731 14.3269 64 32 64Z" fill="white"/><path id="stop circle_2" fill-rule="evenodd" clip-rule="evenodd" d="M39.6667 23H26.3333C24.5 23 23 24.5 23 26.3333V39.6667C23 41.5 24.5 43 26.3333 43H39.6667C41.5 43 43 41.5 43 39.6667V26.3333C43 24.5 41.5 23 39.6667 23Z" fill="white"/><circle id="Ellipse 14" cx="32" cy="32" r="10" fill="#C6002B"/></g></svg></div>
+          </div>
         </div>
         </sc-if>
 
+        <!-- Countdown (design-c) -->
         <sc-if value="{{ isVoiceCountdown }}" hint-placeholder-val="{{ false }}">
-        <div style="display:flex; flex-direction:column; height:100dvh; max-height:100%; background:#f6f8f9;">
-  <div style="display:flex; justify-content:flex-end; padding:8px 12px 0;">
-    <div onMouseDown="{{ discardVoiceRec }}" style="width:44px; height:44px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#27292d" stroke-width="2" stroke-linecap="round"></path></svg>
-    </div>
-  </div>
-          <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:24px; padding:0 24px;">
-            <canvas ref="{{ vCountdownCanvasRef }}" width="660" height="120" style="width:100%; height:60px;"></canvas>
-            <p style="margin:0; font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; font-weight:600; font-size:18px; line-height:24px; color:#27292d; text-align:center; font-variant-numeric:tabular-nums;">{{ vCountdown }}</p>
+        <div style="position:absolute; inset:0;">
+          <div onMouseDown="{{ closeRecorder }}" style="position:absolute; top:16px; right:16px; z-index:2; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer;"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M18.3 5.71C17.91 5.32 17.28 5.32 16.89 5.71L12 10.59L7.11 5.7C6.72 5.31 6.09 5.31 5.7 5.7C5.31 6.09 5.31 6.72 5.7 7.11L10.59 12L5.7 16.89C5.31 17.28 5.31 17.91 5.7 18.3C6.09 18.69 6.72 18.69 7.11 18.3L12 13.41L16.89 18.3C17.28 18.69 17.91 18.69 18.3 18.3C18.69 17.91 18.69 17.28 18.3 16.89L13.41 12L18.3 7.11C18.68 6.73 18.68 6.09 18.3 5.71Z" fill="#fff"></path></svg></div>
+          <div style="position:absolute; left:50%; top:calc(50% + 30px); transform:translate(-50%,-50%); width:295px; display:flex; flex-direction:column; align-items:center; gap:24px;">
+            <canvas ref="{{ vCountdownCanvasRef }}" width="528" height="84" style="width:264px; height:42px;"></canvas>
+            <div style="height:36px; display:flex; align-items:center; justify-content:center;"><p style="margin:0; font-weight:600; font-size:18px; line-height:24px; color:#fff; text-align:center; font-variant-numeric:tabular-nums;">Recording in {{ vCountdown }}</p></div>
           </div>
-          <div style="padding:24px 16px 40px; display:flex; justify-content:center;">
-            <div onMouseDown="{{ cancelCountdown }}" style="width:64px; height:64px; border-radius:999px; background:var(--accent,#c6002b); display:flex; align-items:center; justify-content:center; cursor:pointer;">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><rect x="5" y="5" width="14" height="14" rx="3"></rect></svg>
-            </div>
+          <div style="position:absolute; left:0; right:0; bottom:88px; display:flex; justify-content:center;">
+            <div onMouseDown="{{ cancelCountdown }}" style="width:64px; height:64px; border-radius:999px; background:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer;"><svg width="22" height="22" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3" fill="#C6002B"></rect></svg></div>
           </div>
         </div>
         </sc-if>
 
+        <!-- Recording (design-c) -->
         <sc-if value="{{ isVoiceRecording }}" hint-placeholder-val="{{ false }}">
-        <div style="display:flex; flex-direction:column; height:100dvh; max-height:100%; background:#f6f8f9;">
-  <div style="display:flex; justify-content:flex-end; padding:8px 12px 0;">
-    <div onMouseDown="{{ discardVoiceRec }}" style="width:44px; height:44px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#27292d" stroke-width="2" stroke-linecap="round"></path></svg>
-    </div>
-  </div>
-          <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:24px; padding:0 24px;">
-            <canvas ref="{{ vCanvasRef }}" width="660" height="120" style="width:100%; height:60px;"></canvas>
-            <p style="margin:0; font-weight:600; font-size:18px; line-height:24px; color:#27292d; text-align:center;">Time remaining {{ vRemaining }}</p>
+        <div style="position:absolute; inset:0;">
+          <div onMouseDown="{{ closeRecorder }}" style="position:absolute; top:16px; right:16px; z-index:2; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer;"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M18.3 5.71C17.91 5.32 17.28 5.32 16.89 5.71L12 10.59L7.11 5.7C6.72 5.31 6.09 5.31 5.7 5.7C5.31 6.09 5.31 6.72 5.7 7.11L10.59 12L5.7 16.89C5.31 17.28 5.31 17.91 5.7 18.3C6.09 18.69 6.72 18.69 7.11 18.3L12 13.41L16.89 18.3C17.28 18.69 17.91 18.69 18.3 18.3C18.69 17.91 18.69 17.28 18.3 16.89L13.41 12L18.3 7.11C18.68 6.73 18.68 6.09 18.3 5.71Z" fill="#fff"></path></svg></div>
+          <div style="position:absolute; left:50%; top:calc(50% + 30px); transform:translate(-50%,-50%); width:295px; display:flex; flex-direction:column; align-items:center; gap:24px;">
+            <canvas ref="{{ vCanvasRef }}" width="528" height="84" style="width:264px; height:42px;"></canvas>
+            <div style="height:36px; display:flex; align-items:center; justify-content:center;"><p style="margin:0; font-weight:600; font-size:18px; line-height:24px; color:#fff; text-align:center; font-variant-numeric:tabular-nums;">Time remaining {{ vRemaining }}</p></div>
           </div>
-          <div style="padding:24px 16px 40px; display:flex; justify-content:center;">
+          <div style="position:absolute; left:0; right:0; bottom:88px; display:flex; justify-content:center;">
             <div style="position:relative; width:64px; height:64px; display:flex; align-items:center; justify-content:center;">
-              <div style="position:absolute; width:112px; height:112px; border-radius:999px; background:rgba(198,0,43,0.18); animation:tbpulse1 1.6s ease-in-out infinite;"></div>
-              <div style="position:absolute; width:88px; height:88px; border-radius:999px; background:rgba(198,0,43,0.28); animation:tbpulse2 1.6s ease-in-out infinite;"></div>
-              <div onMouseDown="{{ stopVoiceRec }}" style="position:relative; width:64px; height:64px; border-radius:999px; background:var(--accent,#c6002b); display:flex; align-items:center; justify-content:center; cursor:pointer;">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><rect x="5" y="5" width="14" height="14" rx="3"></rect></svg>
-              </div>
+              <div style="position:absolute; width:112px; height:112px; border-radius:999px; background:rgba(255,255,255,0.10); animation:tbpulse1 1.6s ease-in-out infinite;"></div>
+              <div style="position:absolute; width:88px; height:88px; border-radius:999px; background:rgba(255,255,255,0.18); animation:tbpulse2 1.6s ease-in-out infinite;"></div>
+              <div onMouseDown="{{ stopVoiceRec }}" style="position:relative; width:64px; height:64px; border-radius:999px; background:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer;"><svg width="22" height="22" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3" fill="#C6002B"></rect></svg></div>
             </div>
           </div>
         </div>
         </sc-if>
 
+        <!-- Review (design-c, Try Again / Send) -->
         <sc-if value="{{ isVoiceRecorded }}" hint-placeholder-val="{{ false }}">
-        <div style="display:flex; flex-direction:column; height:100dvh; max-height:100%; background:#f6f8f9;">
-  <div style="display:flex; justify-content:flex-end; padding:8px 12px 0;">
-    <div onMouseDown="{{ discardVoiceRec }}" style="width:44px; height:44px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#27292d" stroke-width="2" stroke-linecap="round"></path></svg>
-    </div>
-  </div>
-          <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 24px;">
-            <div style="position:relative; width:100%; border-radius:12px; background:#e9edf0; padding:32px 20px; display:flex; align-items:center; justify-content:center; box-sizing:border-box;">
-              <canvas ref="{{ vRecordedCanvasRef }}" width="600" height="120" style="width:100%; height:60px;"></canvas>
-              <div onMouseDown="{{ playVoiceRec }}" style="position:absolute; width:56px; height:56px; border-radius:999px; background:#fff; box-shadow:0 2px 8px rgba(0,0,0,0.18); display:flex; align-items:center; justify-content:center; cursor:pointer;">
-                <sc-if value="{{ isVoicePlaying }}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="#27292d"><rect x="5" y="5" width="14" height="14" rx="3"></rect></svg></sc-if>
-                <sc-if value="{{ notVoicePlaying }}" hint-placeholder-val="{{ true }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="#27292d"><path d="M8 5v14l11-7z"></path></svg></sc-if>
-              </div>
-            </div>
+        <div style="position:absolute; inset:0;">
+          <div onMouseDown="{{ closeRecorder }}" style="position:absolute; top:16px; right:16px; z-index:2; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer;"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M18.3 5.71C17.91 5.32 17.28 5.32 16.89 5.71L12 10.59L7.11 5.7C6.72 5.31 6.09 5.31 5.7 5.7C5.31 6.09 5.31 6.72 5.7 7.11L10.59 12L5.7 16.89C5.31 17.28 5.31 17.91 5.7 18.3C6.09 18.69 6.72 18.69 7.11 18.3L12 13.41L16.89 18.3C17.28 18.69 17.91 18.69 18.3 18.3C18.69 17.91 18.69 17.28 18.3 16.89L13.41 12L18.3 7.11C18.68 6.73 18.68 6.09 18.3 5.71Z" fill="#fff"></path></svg></div>
+          <div style="position:absolute; left:50%; top:calc(50% + 30px); transform:translate(-50%,-50%); width:295px; display:flex; flex-direction:column; align-items:center; gap:24px;">
+            <canvas ref="{{ vRecordedCanvasRef }}" width="528" height="84" style="width:264px; height:42px;"></canvas>
+            <div style="height:36px; display:flex; align-items:center; justify-content:center;"><div onMouseDown="{{ playVoiceRec }}" style="display:flex; align-items:center; gap:8px; height:36px; padding:0 16px 0 12px; border-radius:999px; background:#27292d; cursor:pointer;">
+              <sc-if value="{{ isVoicePlaying }}" hint-placeholder-val="{{ false }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><rect x="5" y="5" width="14" height="14" rx="3"></rect></svg></sc-if>
+              <sc-if value="{{ notVoicePlaying }}" hint-placeholder-val="{{ true }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"></path></svg></sc-if>
+              <span style="font-weight:600; font-size:14px; line-height:20px; color:#fff; font-variant-numeric:tabular-nums;">{{ vTime }}</span>
+            </div></div>
           </div>
-          <div style="padding:16px 16px 24px; display:flex; flex-direction:column; align-items:center; gap:10px;">
-            <div onMouseDown="{{ startVoiceRec }}" style="width:100%; border:1px solid #27292d; border-radius:999px; padding:12px; text-align:center; font-weight:600; font-size:16px; line-height:20px; color:#27292d; cursor:pointer; box-sizing:border-box;">Try Again</div>
-            <div onMouseDown="{{ sendVoiceRec }}" style="width:100%; background:var(--accent,#c6002b); border-radius:999px; padding:12px; text-align:center; font-weight:600; font-size:16px; line-height:20px; color:#fff; cursor:pointer; box-sizing:border-box;">Send</div>
-            <p style="margin:0; font-weight:400; font-size:12px; line-height:16px; color:#6b7075; text-align:center;">By sending, you agree to your recording being broadcast.</p>
+          <div style="position:absolute; left:16px; right:16px; bottom:24px; display:flex; flex-direction:column; gap:10px;">
+            <div onMouseDown="{{ startVoiceRec }}" style="border:1px solid #fff; color:#fff; border-radius:999px; padding:12px; text-align:center; font-weight:600; font-size:16px; line-height:20px; cursor:pointer; box-sizing:border-box;">Try Again</div>
+            <div onMouseDown="{{ sendVoiceRec }}" style="background:var(--accent,#c6002b); color:#fff; border-radius:999px; padding:12px; text-align:center; font-weight:600; font-size:16px; line-height:20px; cursor:pointer; box-sizing:border-box;">Send</div>
+            <p style="margin:0; font-size:12px; line-height:16px; color:#a9afb2; text-align:center;">By sending, you agree to your recording being broadcast.</p>
           </div>
         </div>
         </sc-if>
@@ -901,7 +887,7 @@ class Component extends DCLogic {
   componentDidUpdate() {
     this.applyAccent();
     this.hydrateImgs();
-    if (this.state.voiceRec === "countdown" && this.vCountdownCanvasRef.current) { this._vDrawStatic(this.vCountdownCanvasRef.current, -1, false); }
+    if (this.state.voiceRec === "countdown" && this.vCountdownCanvasRef.current) { this._vDrawStatic(this.vCountdownCanvasRef.current, 1, true); }
     if (this.state.voiceRec === "idle" && this.vIdleCanvasRef.current) { this._vDrawStatic(this.vIdleCanvasRef.current, 1, true, true); }
     const el = this.chatRef.current;
     if (el) el.scrollTop = el.scrollHeight;
@@ -985,7 +971,7 @@ class Component extends DCLogic {
     const pIdx = Math.round((progress || 0) * data.length);
     for (let i = 0; i < data.length; i++) {
       const lit = opaque || i <= pIdx;
-      ctx.fillStyle = onDark ? "rgba(255,255,255,0.85)" : (lit ? "rgba(107,112,117,0.95)" : "rgba(107,112,117,0.28)");
+      ctx.fillStyle = (lit || onDark) ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.28)";
       const h = Math.max(3, data[i] * H); const x = i * step; const y = (H - h) / 2; const r = barW / 2;
       ctx.beginPath(); ctx.moveTo(x, y + r); ctx.arcTo(x, y, x + r, y, r); ctx.arcTo(x + barW, y, x + barW, y + r, r); ctx.lineTo(x + barW, y + h - r); ctx.arcTo(x + barW, y + h, x + r, y + h, r); ctx.arcTo(x, y + h, x, y + h - r, r); ctx.closePath(); ctx.fill();
     }
