@@ -894,7 +894,6 @@ class Component extends DCLogic {
     if (this._vRaf) cancelAnimationFrame(this._vRaf);
     if (this._vTimer) clearInterval(this._vTimer);
     try { if (this._vPlayer) this._vPlayer.pause(); } catch (e) {}
-    try { if (this._vStream) this._vStream.getTracks().forEach((t) => t.stop()); } catch (e) {}
     try { if (this._vCtx) this._vCtx.close(); } catch (e) {}
     this._vCtx = null; this._vAnalyser = null; this._vStream = null;
     try { if (this._vURL) URL.revokeObjectURL(this._vURL); } catch (e) {}
@@ -920,8 +919,9 @@ class Component extends DCLogic {
       this._vDrawLoop();
     };
     if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) { this._vLevels = []; begin(false); return; }
-    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-      this._vStream = stream; this._vLevels = []; this._vChunks = [];
+    const live = this._micStream && this._micStream.getAudioTracks().some((t) => t.readyState === "live");
+    (live ? Promise.resolve(this._micStream) : navigator.mediaDevices.getUserMedia({ audio: true })).then((stream) => {
+      this._micStream = stream; this._vStream = stream; this._vLevels = []; this._vChunks = [];
       try {
         let mt = ""; const cand = ["audio/mp4", "audio/webm;codecs=opus", "audio/webm", "audio/ogg"];
         if (window.MediaRecorder && MediaRecorder.isTypeSupported) { for (let i = 0; i < cand.length; i++) { if (MediaRecorder.isTypeSupported(cand[i])) { mt = cand[i]; break; } } }
@@ -988,7 +988,6 @@ class Component extends DCLogic {
     if (this._vRaf) cancelAnimationFrame(this._vRaf);
     if (this._vTimer) clearInterval(this._vTimer);
     try { if (this._vRec && this._vRec.state !== "inactive") this._vRec.stop(); } catch (e) {}
-    try { if (this._vStream) this._vStream.getTracks().forEach((t) => t.stop()); } catch (e) {}
     try { if (this._vCtx) this._vCtx.close(); } catch (e) {}
     this._vCtx = null; this._vAnalyser = null;
     this._vDur = Math.max(1, this.state.vSeconds);
@@ -1032,6 +1031,7 @@ class Component extends DCLogic {
 
   sendVoiceRec() {
     try { if (this._vPlayer) this._vPlayer.pause(); } catch (e) {}
+    this._releaseMic();
     this.setState({ voiceRec: "idle", vSeconds: 0, vPlaying: false, view: "success", successFrom: "voice" });
   }
 
@@ -1040,16 +1040,33 @@ class Component extends DCLogic {
     if (this._vRaf) cancelAnimationFrame(this._vRaf);
     if (this._vTimer) clearInterval(this._vTimer);
     try { if (this._vRec && this._vRec.state !== "inactive") this._vRec.stop(); } catch (e) {}
-    try { if (this._vStream) this._vStream.getTracks().forEach((t) => t.stop()); } catch (e) {}
     try { if (this._vCtx) this._vCtx.close(); } catch (e) {}
     this._vCtx = null; this._vAnalyser = null;
+    this._releaseMic();
     this.discardVoiceRec();
     this.setState({ view: "intro" });
   }
 
   sendTalkback() {
     if (this.state.micGranted) { this.openRecorder(); return; }
-    this.setState({ showMicPrompt: true });
+    const md = navigator.mediaDevices;
+    if (!(md && md.getUserMedia)) { this.setState({ showMicPrompt: true }); return; }
+    // One allow only. The device's own microphone prompt is the permission step, and the
+    // stream it grants is kept for the whole recorder session so recording never asks again.
+    md.getUserMedia({ audio: true }).then((stream) => {
+      this._releaseMic(); this._micStream = stream;
+      this.setState({ micGranted: true });
+      this.openRecorder();
+    }).catch((err) => {
+      const n = err && err.name;
+      if (n === "NotAllowedError" || n === "SecurityError" || n === "PermissionDeniedError") this.setState({ showMicDisabled: true });
+      else this.setState({ showMicPrompt: true });
+    });
+  }
+
+  _releaseMic() {
+    try { if (this._micStream) this._micStream.getTracks().forEach((t) => t.stop()); } catch (e) {}
+    this._micStream = null; this._vStream = null;
   }
 
   openRecorder() {
