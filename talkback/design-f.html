@@ -553,7 +553,7 @@
         <div style="padding:16px 0 0;">
           <div style="display:flex; height:48px; align-items:center; padding:0 16px 0 8px;">
             <div onClick="{{ backFromText }}" style="width:48px; height:48px; margin-right:4px; display:flex; align-items:center; justify-content:center; border-radius:999px; cursor:pointer; flex-shrink:0;"><svg width="10" height="17" viewBox="0 0 9.42819 16"><path d="M9.0094 0.418792C8.45101 -0.139597 7.54899 -0.139597 6.9906 0.418792L0.418792 6.9906C-0.139597 7.54899 -0.139597 8.45101 0.418792 9.0094L6.9906 15.5812C7.54899 16.1396 8.45101 16.1396 9.0094 15.5812C9.56779 15.0228 9.56779 14.1208 9.0094 13.5624L3.45414 7.99284L9.0094 2.43758C9.55347 1.87919 9.55347 0.962864 9.0094 0.418792Z" fill="#27292D"></path></svg></div>
-            <p style="margin:0; font-weight:600; font-size:18px; line-height:24px; color:#000; letter-spacing:-0.5px; flex:1; text-align:center;">Send Text</p>
+            <p style="margin:0; font-weight:600; font-size:18px; line-height:24px; color:#000; letter-spacing:-0.5px; flex:1; text-align:center;">Text Message</p>
             <div style="width:44px; flex-shrink:0;"></div>
           </div>
         </div>
@@ -580,6 +580,7 @@
         <sc-if value="{{ isVoiceIdle }}" hint-placeholder-val="{{ true }}">
         <div style="position:absolute; inset:0;">
           <div onMouseDown="{{ backFromRecorder }}" style="position:absolute; top:24px; left:16px; z-index:2; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer;" aria-label="Back"><svg width="10" height="17" viewBox="0 0 9.42819 16"><path d="M9.0094 0.418792C8.45101 -0.139597 7.54899 -0.139597 6.9906 0.418792L0.418792 6.9906C-0.139597 7.54899 -0.139597 8.45101 0.418792 9.0094L6.9906 15.5812C7.54899 16.1396 8.45101 16.1396 9.0094 15.5812C9.56779 15.0228 9.56779 14.1208 9.0094 13.5624L3.45414 7.99284L9.0094 2.43758C9.55347 1.87919 9.55347 0.962864 9.0094 0.418792Z" fill="#fff"></path></svg></div>
+          <p style="position:absolute; top:28px; left:56px; right:56px; margin:0; text-align:center; font-weight:600; font-size:18px; line-height:24px; letter-spacing:-0.5px; color:#fff; pointer-events:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Voice Message</p>
           <div style="position:absolute; left:50%; top:calc(50% + 30px); transform:translate(-50%,-50%); width:295px; display:flex; flex-direction:column; align-items:center; gap:24px;">
             <canvas ref="{{ vIdleCanvasRef }}" width="528" height="84" style="width:264px; height:42px;"></canvas>
             <div style="height:36px; display:flex; align-items:center; justify-content:center;"><p style="margin:0; font-size:16px; line-height:18px; color:#fff; text-align:center;">Tap to record and send a message to<br><span style="font-weight:600;">Z100</span></p></div>
@@ -594,6 +595,7 @@
         <sc-if value="{{ isVoiceCountdown }}" hint-placeholder-val="{{ false }}">
         <div style="position:absolute; inset:0;">
           <div onMouseDown="{{ backFromRecorder }}" style="position:absolute; top:24px; left:16px; z-index:2; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer;" aria-label="Back"><svg width="10" height="17" viewBox="0 0 9.42819 16"><path d="M9.0094 0.418792C8.45101 -0.139597 7.54899 -0.139597 6.9906 0.418792L0.418792 6.9906C-0.139597 7.54899 -0.139597 8.45101 0.418792 9.0094L6.9906 15.5812C7.54899 16.1396 8.45101 16.1396 9.0094 15.5812C9.56779 15.0228 9.56779 14.1208 9.0094 13.5624L3.45414 7.99284L9.0094 2.43758C9.55347 1.87919 9.55347 0.962864 9.0094 0.418792Z" fill="#fff"></path></svg></div>
+          <p style="position:absolute; top:28px; left:56px; right:56px; margin:0; text-align:center; font-weight:600; font-size:18px; line-height:24px; letter-spacing:-0.5px; color:#fff; pointer-events:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Voice Message</p>
           <div style="position:absolute; left:50%; top:calc(50% + 30px); transform:translate(-50%,-50%); width:295px; display:flex; flex-direction:column; align-items:center; gap:24px;">
             <canvas ref="{{ vCountdownCanvasRef }}" width="528" height="84" style="width:264px; height:42px;"></canvas>
             <div style="height:36px; display:flex; align-items:center; justify-content:center;"><p style="margin:0; font-weight:600; font-size:24px; line-height:30px; color:#fff; text-align:center; font-variant-numeric:tabular-nums;">{{ vCountdown }}</p></div>
@@ -608,6 +610,7 @@
         <sc-if value="{{ isVoiceRecording }}" hint-placeholder-val="{{ false }}">
         <div style="position:absolute; inset:0;">
           <div onMouseDown="{{ backFromRecorder }}" style="position:absolute; top:24px; left:16px; z-index:2; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer;" aria-label="Back"><svg width="10" height="17" viewBox="0 0 9.42819 16"><path d="M9.0094 0.418792C8.45101 -0.139597 7.54899 -0.139597 6.9906 0.418792L0.418792 6.9906C-0.139597 7.54899 -0.139597 8.45101 0.418792 9.0094L6.9906 15.5812C7.54899 16.1396 8.45101 16.1396 9.0094 15.5812C9.56779 15.0228 9.56779 14.1208 9.0094 13.5624L3.45414 7.99284L9.0094 2.43758C9.55347 1.87919 9.55347 0.962864 9.0094 0.418792Z" fill="#fff"></path></svg></div>
+          <p style="position:absolute; top:28px; left:56px; right:56px; margin:0; text-align:center; font-weight:600; font-size:18px; line-height:24px; letter-spacing:-0.5px; color:#fff; pointer-events:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Voice Message</p>
           <div style="position:absolute; left:50%; top:calc(50% + 30px); transform:translate(-50%,-50%); width:295px; display:flex; flex-direction:column; align-items:center; gap:24px;">
             <canvas ref="{{ vCanvasRef }}" width="528" height="84" style="width:264px; height:42px;"></canvas>
             <div style="height:36px; display:flex; align-items:center; justify-content:center;"><p style="margin:0; font-weight:400; font-size:16px; line-height:20px; color:#fff; text-align:center; font-variant-numeric:tabular-nums;">Time remaining {{ vRemaining }}</p></div>
@@ -626,6 +629,7 @@
         <sc-if value="{{ isVoiceRecorded }}" hint-placeholder-val="{{ false }}">
         <div style="position:absolute; inset:0;">
           <div onMouseDown="{{ backFromRecorder }}" style="position:absolute; top:24px; left:16px; z-index:2; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer;" aria-label="Back"><svg width="10" height="17" viewBox="0 0 9.42819 16"><path d="M9.0094 0.418792C8.45101 -0.139597 7.54899 -0.139597 6.9906 0.418792L0.418792 6.9906C-0.139597 7.54899 -0.139597 8.45101 0.418792 9.0094L6.9906 15.5812C7.54899 16.1396 8.45101 16.1396 9.0094 15.5812C9.56779 15.0228 9.56779 14.1208 9.0094 13.5624L3.45414 7.99284L9.0094 2.43758C9.55347 1.87919 9.55347 0.962864 9.0094 0.418792Z" fill="#fff"></path></svg></div>
+          <p style="position:absolute; top:28px; left:56px; right:56px; margin:0; text-align:center; font-weight:600; font-size:18px; line-height:24px; letter-spacing:-0.5px; color:#fff; pointer-events:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Voice Message</p>
           <div style="position:absolute; left:50%; top:calc(50% - 37px); transform:translateX(-50%); background:#27292d; border-radius:6px; padding:16px; display:flex; flex-direction:column; align-items:center; gap:24px;">
             <canvas ref="{{ vRecordedCanvasRef }}" width="528" height="84" style="width:264px; height:42px;"></canvas>
             <div onMouseDown="{{ playVoiceRec }}" style="padding:4px; border-radius:999px; background:#fff; box-shadow:0 1px 1.5px rgba(0,0,0,0.12); display:flex; cursor:pointer;">
