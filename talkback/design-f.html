@@ -31,6 +31,8 @@
   @keyframes tbRingOuter { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.18); opacity: 0.45; } }
   @keyframes tbRingInner { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.12); opacity: 0.57; } }
   @media (prefers-reduced-motion: reduce) { .tb-ring { animation: none !important; } }
+  @keyframes tbSheetUp { from { transform: translateY(100%); } }
+  @keyframes tbScrimIn { from { opacity: 0; } }
   @keyframes tbpop { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes tbmarquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
   @keyframes tbpulse1 { 0%,100% { transform: scale(1); opacity: 0.55; } 50% { transform: scale(1.18); opacity: 0.25; } }
@@ -63,7 +65,7 @@
   <div class="tb-phone" style="position:relative; width:375px; height:min(812px, calc(100dvh - 48px)); max-height:812px; background:#f6f8f9; border-radius:44px; box-shadow:0 8px 24px rgba(0,0,0,0.2); overflow:hidden; display:flex; flex-direction:column;">
 
     <!-- ════════════ STATION SCREEN ════════════ -->
-    <sc-if value="{{ isStation }}" hint-placeholder-val="{{ true }}">
+    <sc-if value="{{ showStation }}" hint-placeholder-val="{{ true }}">
     <div data-screen-label="Station" style="flex:1; min-height:0; display:grid; grid-template-rows:auto 1fr auto; grid-template-columns:minmax(0,1fr);">
 
       <!-- Fixed header -->
@@ -430,15 +432,19 @@
 
     <!-- ════════════ TALKBACK FLOW ════════════ -->
     <sc-if value="{{ isTalkback }}" hint-placeholder-val="{{ false }}">
-    <div data-screen-label="Talkback" style="flex:1; min-height:0; display:flex; flex-direction:column; position:relative;">
+    <div data-screen-label="Talkback" style="position:absolute; inset:0; z-index:40;">
+    <div onClick="{{ scrimTap }}" style="{{ scrimStyle }}"></div>
+    <div style="{{ sheetStyle }}">
+    <sc-if value="{{ showGrabber }}" hint-placeholder-val="{{ true }}"><div style="position:absolute; top:6px; left:50%; transform:translateX(-50%); width:36px; height:5px; border-radius:3px; background:#c5cdd2; z-index:3;"></div></sc-if>
 
       <!-- ═══ INTRO ═══ -->
       <sc-if value="{{ isIntro }}" hint-placeholder-val="{{ true }}">
       <div style="flex:1; min-height:0; display:flex; flex-direction:column; background:#f6f8f9;">
         <div style="padding:16px 0 0;">
-          <div style="display:flex; height:48px; align-items:center; padding:0 16px 0 8px;">
-            <div onClick="{{ goStation }}" style="width:48px; height:48px; margin-right:4px; display:flex; align-items:center; justify-content:center; border-radius:999px; cursor:pointer; flex-shrink:0;"><svg width="10" height="17" viewBox="0 0 9.42819 16"><path d="M9.0094 0.418792C8.45101 -0.139597 7.54899 -0.139597 6.9906 0.418792L0.418792 6.9906C-0.139597 7.54899 -0.139597 8.45101 0.418792 9.0094L6.9906 15.5812C7.54899 16.1396 8.45101 16.1396 9.0094 15.5812C9.56779 15.0228 9.56779 14.1208 9.0094 13.5624L3.45414 7.99284L9.0094 2.43758C9.55347 1.87919 9.55347 0.962864 9.0094 0.418792Z" fill="#27292D"></path></svg></div>
-            <p style="margin:0; font-weight:600; font-size:18px; line-height:24px; color:#000; letter-spacing:-0.5px;">Talkback</p>
+          <div style="display:flex; height:48px; align-items:center; padding:0 8px;">
+            <div style="width:44px; flex-shrink:0;"></div>
+            <p style="margin:0; font-weight:600; font-size:18px; line-height:24px; color:#000; letter-spacing:-0.5px; flex:1; text-align:center;">Talkback</p>
+            <div onClick="{{ closeFlow }}" style="width:44px; height:44px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;" aria-label="Close"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M18.3 5.71C17.91 5.32 17.28 5.32 16.89 5.71L12 10.59L7.11 5.7C6.72 5.31 6.09 5.31 5.7 5.7C5.31 6.09 5.31 6.72 5.7 7.11L10.59 12L5.7 16.89C5.31 17.28 5.31 17.91 5.7 18.3C6.09 18.69 6.72 18.69 7.11 18.3L12 13.41L16.89 18.3C17.28 18.69 17.91 18.69 18.3 18.3C18.69 17.91 18.69 17.28 18.3 16.89L13.41 12L18.3 7.11C18.68 6.73 18.68 6.09 18.3 5.71Z" fill="#27292d"></path></svg></div>
           </div>
         </div>
         <div class="hide-sb" style="overflow-y:auto; flex:1; min-height:0;">
@@ -546,8 +552,9 @@
       <div style="flex:1; min-height:0; display:flex; flex-direction:column; background:#f6f8f9;">
         <div style="padding:16px 0 0;">
           <div style="display:flex; height:48px; align-items:center; padding:0 16px 0 8px;">
-            <div onClick="{{ goIntro }}" style="width:48px; height:48px; margin-right:4px; display:flex; align-items:center; justify-content:center; border-radius:999px; cursor:pointer; flex-shrink:0;"><svg width="10" height="17" viewBox="0 0 9.42819 16"><path d="M9.0094 0.418792C8.45101 -0.139597 7.54899 -0.139597 6.9906 0.418792L0.418792 6.9906C-0.139597 7.54899 -0.139597 8.45101 0.418792 9.0094L6.9906 15.5812C7.54899 16.1396 8.45101 16.1396 9.0094 15.5812C9.56779 15.0228 9.56779 14.1208 9.0094 13.5624L3.45414 7.99284L9.0094 2.43758C9.55347 1.87919 9.55347 0.962864 9.0094 0.418792Z" fill="#27292D"></path></svg></div>
-            <p style="margin:0; font-weight:600; font-size:18px; line-height:24px; color:#000; letter-spacing:-0.5px;">Send Text</p>
+            <div onClick="{{ backFromText }}" style="width:48px; height:48px; margin-right:4px; display:flex; align-items:center; justify-content:center; border-radius:999px; cursor:pointer; flex-shrink:0;"><svg width="10" height="17" viewBox="0 0 9.42819 16"><path d="M9.0094 0.418792C8.45101 -0.139597 7.54899 -0.139597 6.9906 0.418792L0.418792 6.9906C-0.139597 7.54899 -0.139597 8.45101 0.418792 9.0094L6.9906 15.5812C7.54899 16.1396 8.45101 16.1396 9.0094 15.5812C9.56779 15.0228 9.56779 14.1208 9.0094 13.5624L3.45414 7.99284L9.0094 2.43758C9.55347 1.87919 9.55347 0.962864 9.0094 0.418792Z" fill="#27292D"></path></svg></div>
+            <p style="margin:0; font-weight:600; font-size:18px; line-height:24px; color:#000; letter-spacing:-0.5px; flex:1; text-align:center;">Send Text</p>
+            <div style="width:44px; flex-shrink:0;"></div>
           </div>
         </div>
         <div class="hide-sb" style="overflow-y:auto; flex:1; min-height:0;">
@@ -572,7 +579,7 @@
         <!-- Tap to record (Figma Messaging / Talkback / Default) -->
         <sc-if value="{{ isVoiceIdle }}" hint-placeholder-val="{{ true }}">
         <div style="position:absolute; inset:0;">
-          <div onMouseDown="{{ closeRecorder }}" style="position:absolute; top:16px; right:16px; z-index:2; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer;"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M18.3 5.71C17.91 5.32 17.28 5.32 16.89 5.71L12 10.59L7.11 5.7C6.72 5.31 6.09 5.31 5.7 5.7C5.31 6.09 5.31 6.72 5.7 7.11L10.59 12L5.7 16.89C5.31 17.28 5.31 17.91 5.7 18.3C6.09 18.69 6.72 18.69 7.11 18.3L12 13.41L16.89 18.3C17.28 18.69 17.91 18.69 18.3 18.3C18.69 17.91 18.69 17.28 18.3 16.89L13.41 12L18.3 7.11C18.68 6.73 18.68 6.09 18.3 5.71Z" fill="#fff"></path></svg></div>
+          <div onMouseDown="{{ backFromRecorder }}" style="position:absolute; top:16px; left:16px; z-index:2; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer;" aria-label="Back"><svg width="10" height="17" viewBox="0 0 9.42819 16"><path d="M9.0094 0.418792C8.45101 -0.139597 7.54899 -0.139597 6.9906 0.418792L0.418792 6.9906C-0.139597 7.54899 -0.139597 8.45101 0.418792 9.0094L6.9906 15.5812C7.54899 16.1396 8.45101 16.1396 9.0094 15.5812C9.56779 15.0228 9.56779 14.1208 9.0094 13.5624L3.45414 7.99284L9.0094 2.43758C9.55347 1.87919 9.55347 0.962864 9.0094 0.418792Z" fill="#fff"></path></svg></div>
           <div style="position:absolute; left:50%; top:calc(50% + 30px); transform:translate(-50%,-50%); width:295px; display:flex; flex-direction:column; align-items:center; gap:24px;">
             <canvas ref="{{ vIdleCanvasRef }}" width="528" height="84" style="width:264px; height:42px;"></canvas>
             <div style="height:36px; display:flex; align-items:center; justify-content:center;"><p style="margin:0; font-size:16px; line-height:18px; color:#fff; text-align:center;">Tap to record and send a message to<br><span style="font-weight:600;">Z100</span></p></div>
@@ -586,7 +593,7 @@
         <!-- Countdown (design-c) -->
         <sc-if value="{{ isVoiceCountdown }}" hint-placeholder-val="{{ false }}">
         <div style="position:absolute; inset:0;">
-          <div onMouseDown="{{ closeRecorder }}" style="position:absolute; top:16px; right:16px; z-index:2; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer;"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M18.3 5.71C17.91 5.32 17.28 5.32 16.89 5.71L12 10.59L7.11 5.7C6.72 5.31 6.09 5.31 5.7 5.7C5.31 6.09 5.31 6.72 5.7 7.11L10.59 12L5.7 16.89C5.31 17.28 5.31 17.91 5.7 18.3C6.09 18.69 6.72 18.69 7.11 18.3L12 13.41L16.89 18.3C17.28 18.69 17.91 18.69 18.3 18.3C18.69 17.91 18.69 17.28 18.3 16.89L13.41 12L18.3 7.11C18.68 6.73 18.68 6.09 18.3 5.71Z" fill="#fff"></path></svg></div>
+          <div onMouseDown="{{ backFromRecorder }}" style="position:absolute; top:16px; left:16px; z-index:2; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer;" aria-label="Back"><svg width="10" height="17" viewBox="0 0 9.42819 16"><path d="M9.0094 0.418792C8.45101 -0.139597 7.54899 -0.139597 6.9906 0.418792L0.418792 6.9906C-0.139597 7.54899 -0.139597 8.45101 0.418792 9.0094L6.9906 15.5812C7.54899 16.1396 8.45101 16.1396 9.0094 15.5812C9.56779 15.0228 9.56779 14.1208 9.0094 13.5624L3.45414 7.99284L9.0094 2.43758C9.55347 1.87919 9.55347 0.962864 9.0094 0.418792Z" fill="#fff"></path></svg></div>
           <div style="position:absolute; left:50%; top:calc(50% + 30px); transform:translate(-50%,-50%); width:295px; display:flex; flex-direction:column; align-items:center; gap:24px;">
             <canvas ref="{{ vCountdownCanvasRef }}" width="528" height="84" style="width:264px; height:42px;"></canvas>
             <div style="height:36px; display:flex; align-items:center; justify-content:center;"><p style="margin:0; font-weight:600; font-size:24px; line-height:30px; color:#fff; text-align:center; font-variant-numeric:tabular-nums;">{{ vCountdown }}</p></div>
@@ -600,7 +607,7 @@
         <!-- Recording (design-c) -->
         <sc-if value="{{ isVoiceRecording }}" hint-placeholder-val="{{ false }}">
         <div style="position:absolute; inset:0;">
-          <div onMouseDown="{{ closeRecorder }}" style="position:absolute; top:16px; right:16px; z-index:2; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer;"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M18.3 5.71C17.91 5.32 17.28 5.32 16.89 5.71L12 10.59L7.11 5.7C6.72 5.31 6.09 5.31 5.7 5.7C5.31 6.09 5.31 6.72 5.7 7.11L10.59 12L5.7 16.89C5.31 17.28 5.31 17.91 5.7 18.3C6.09 18.69 6.72 18.69 7.11 18.3L12 13.41L16.89 18.3C17.28 18.69 17.91 18.69 18.3 18.3C18.69 17.91 18.69 17.28 18.3 16.89L13.41 12L18.3 7.11C18.68 6.73 18.68 6.09 18.3 5.71Z" fill="#fff"></path></svg></div>
+          <div onMouseDown="{{ backFromRecorder }}" style="position:absolute; top:16px; left:16px; z-index:2; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer;" aria-label="Back"><svg width="10" height="17" viewBox="0 0 9.42819 16"><path d="M9.0094 0.418792C8.45101 -0.139597 7.54899 -0.139597 6.9906 0.418792L0.418792 6.9906C-0.139597 7.54899 -0.139597 8.45101 0.418792 9.0094L6.9906 15.5812C7.54899 16.1396 8.45101 16.1396 9.0094 15.5812C9.56779 15.0228 9.56779 14.1208 9.0094 13.5624L3.45414 7.99284L9.0094 2.43758C9.55347 1.87919 9.55347 0.962864 9.0094 0.418792Z" fill="#fff"></path></svg></div>
           <div style="position:absolute; left:50%; top:calc(50% + 30px); transform:translate(-50%,-50%); width:295px; display:flex; flex-direction:column; align-items:center; gap:24px;">
             <canvas ref="{{ vCanvasRef }}" width="528" height="84" style="width:264px; height:42px;"></canvas>
             <div style="height:36px; display:flex; align-items:center; justify-content:center;"><p style="margin:0; font-weight:400; font-size:16px; line-height:20px; color:#fff; text-align:center; font-variant-numeric:tabular-nums;">Time remaining {{ vRemaining }}</p></div>
@@ -618,7 +625,7 @@
         <!-- Review (Figma Talback_Recording 3363:2029). Card top is set so the waveform lines up with the other recorder screens -->
         <sc-if value="{{ isVoiceRecorded }}" hint-placeholder-val="{{ false }}">
         <div style="position:absolute; inset:0;">
-          <div onMouseDown="{{ closeRecorder }}" style="position:absolute; top:16px; right:16px; z-index:2; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer;"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M18.3 5.71C17.91 5.32 17.28 5.32 16.89 5.71L12 10.59L7.11 5.7C6.72 5.31 6.09 5.31 5.7 5.7C5.31 6.09 5.31 6.72 5.7 7.11L10.59 12L5.7 16.89C5.31 17.28 5.31 17.91 5.7 18.3C6.09 18.69 6.72 18.69 7.11 18.3L12 13.41L16.89 18.3C17.28 18.69 17.91 18.69 18.3 18.3C18.69 17.91 18.69 17.28 18.3 16.89L13.41 12L18.3 7.11C18.68 6.73 18.68 6.09 18.3 5.71Z" fill="#fff"></path></svg></div>
+          <div onMouseDown="{{ backFromRecorder }}" style="position:absolute; top:16px; left:16px; z-index:2; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer;" aria-label="Back"><svg width="10" height="17" viewBox="0 0 9.42819 16"><path d="M9.0094 0.418792C8.45101 -0.139597 7.54899 -0.139597 6.9906 0.418792L0.418792 6.9906C-0.139597 7.54899 -0.139597 8.45101 0.418792 9.0094L6.9906 15.5812C7.54899 16.1396 8.45101 16.1396 9.0094 15.5812C9.56779 15.0228 9.56779 14.1208 9.0094 13.5624L3.45414 7.99284L9.0094 2.43758C9.55347 1.87919 9.55347 0.962864 9.0094 0.418792Z" fill="#fff"></path></svg></div>
           <div style="position:absolute; left:50%; top:calc(50% - 37px); transform:translateX(-50%); background:#27292d; border-radius:6px; padding:16px; display:flex; flex-direction:column; align-items:center; gap:24px;">
             <canvas ref="{{ vRecordedCanvasRef }}" width="528" height="84" style="width:264px; height:42px;"></canvas>
             <div onMouseDown="{{ playVoiceRec }}" style="padding:4px; border-radius:999px; background:#fff; box-shadow:0 1px 1.5px rgba(0,0,0,0.12); display:flex; cursor:pointer;">
@@ -694,6 +701,7 @@
       </sc-if>
 
     </div>
+    </div>
     </sc-if>
 
     <!-- ════════════ SNACKBAR ════════════ -->
@@ -752,6 +760,32 @@
         <p style="margin:0 0 16px; font-weight:500; font-size:22px; line-height:28px; color:#1c1b1f;">Microphone disabled</p>
         <p style="margin:0 0 24px; font-size:14px; line-height:20px; color:#49454f;">To record a Talkback, go to <b>Settings &gt; Apps &gt; iHeart &gt; Permissions</b> and allow Microphone.</p>
         <div style="display:flex; justify-content:flex-end;"><div onClick="{{ closeMicDisabled }}" style="padding:13px; text-align:center; font-weight:600; font-size:14px; letter-spacing:0.2px; color:var(--accent,#c6002b); cursor:pointer; border-radius:999px; padding:10px 12px;">Okay</div></div>
+      </div>
+      </sc-if>
+    </div>
+    </sc-if>
+
+    <!-- ════════════ DISCARD MESSAGE CHECK (closing with a recording or typed text) ════════════ -->
+    <sc-if value="{{ showDiscard }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute; inset:0; z-index:55; display:flex; align-items:center; justify-content:center; padding:0 28px;">
+      <div onClick="{{ keepMessage }}" style="position:absolute; inset:0; background:rgba(0,0,0,0.4);"></div>
+      <sc-if value="{{ isIOS }}" hint-placeholder-val="{{ true }}">
+      <div style="position:relative; width:270px; background:rgba(242,242,242,0.94); backdrop-filter:blur(25px); -webkit-backdrop-filter:blur(25px); border-radius:14px; overflow:hidden; box-shadow:0 12px 48px rgba(0,0,0,0.28); animation:tbpop .2s ease;">
+        <div style="padding:20px 16px; text-align:center;">
+          <p style="margin:0 0 2px; font-weight:600; font-size:17px; line-height:22px; color:#000;">Discard your message?</p>
+          <p style="margin:0; font-size:13px; line-height:17px; color:#000;">{{ discardBody }}</p>
+        </div>
+        <div style="display:flex; border-top:0.33px solid #a9afb2;">
+          <div onClick="{{ keepMessage }}" style="flex:1; padding:11px 8px; text-align:center; font-size:17px; color:#007aff; cursor:pointer; border-right:0.33px solid #a9afb2;">Keep</div>
+          <div onClick="{{ discardMessage }}" style="flex:1; padding:11px 8px; text-align:center; font-size:17px; font-weight:600; color:#ff3b30; cursor:pointer;">Discard</div>
+        </div>
+      </div>
+      </sc-if>
+      <sc-if value="{{ isAndroid }}" hint-placeholder-val="{{ false }}">
+      <div style="position:relative; width:300px; background:#fef7ff; border-radius:28px; padding:24px; box-shadow:0 12px 48px rgba(0,0,0,0.32); animation:tbpop .2s ease;">
+        <p style="margin:0 0 16px; font-weight:500; font-size:22px; line-height:28px; color:#1c1b1f;">Discard your message?</p>
+        <p style="margin:0 0 24px; font-size:14px; line-height:20px; color:#49454f;">{{ discardBody }}</p>
+        <div style="display:flex; justify-content:flex-end; gap:8px;"><div onClick="{{ keepMessage }}" style="padding:10px 12px; text-align:center; font-weight:600; font-size:14px; letter-spacing:0.2px; color:var(--accent,#c6002b); cursor:pointer; border-radius:999px;">Keep</div><div onClick="{{ discardMessage }}" style="padding:10px 12px; text-align:center; font-weight:600; font-size:14px; letter-spacing:0.2px; color:var(--accent,#c6002b); cursor:pointer; border-radius:999px;">Discard</div></div>
       </div>
       </sc-if>
     </div>
@@ -826,6 +860,8 @@ class Component extends DCLogic {
       notifModal: false,
       showMicPrompt: false,
       showMicDisabled: false,
+      confirmDiscard: null,
+      sheetClosing: false,
       micGranted: false,
     };
   }
@@ -1062,16 +1098,44 @@ class Component extends DCLogic {
     this.setState({ voiceRec: "idle", vSeconds: 0, vPlaying: false, view: "success", successFrom: "voice" });
   }
 
-  closeRecorder() {
+  _stopRecording() {
     if (this._cdTimer) { clearInterval(this._cdTimer); this._cdTimer = null; }
     if (this._vRaf) cancelAnimationFrame(this._vRaf);
     if (this._vTimer) clearInterval(this._vTimer);
+    if (this._vPlayRaf) cancelAnimationFrame(this._vPlayRaf);
     try { if (this._vRec && this._vRec.state !== "inactive") this._vRec.stop(); } catch (e) {}
     try { if (this._vCtx) this._vCtx.close(); } catch (e) {}
+    try { if (this._vPlayer) this._vPlayer.pause(); } catch (e) {}
     this._vCtx = null; this._vAnalyser = null;
     this._releaseMic();
+  }
+
+  closeRecorder() {
+    this._stopRecording();
     this.discardVoiceRec();
     this.setState({ view: "intro" });
+  }
+
+  // Back from a step goes to the intro. With a recording or typed text it asks first.
+  backFromText() {
+    if (this.state.textMsg.trim()) { this.setState({ confirmDiscard: "text" }); return; }
+    this.setState({ view: "intro" });
+  }
+
+  backFromRecorder() {
+    const r = this.state.voiceRec;
+    if (r === "recording" || r === "recorded") { this.setState({ confirmDiscard: "voice" }); return; }
+    this.closeRecorder();
+  }
+
+  // X on the intro closes Talkback. With a recording or typed text in progress it asks first.
+  closeFlow() {
+    const s = this.state;
+    const hasAudio = s.view === "recorder" && (s.voiceRec === "recording" || s.voiceRec === "recorded");
+    const hasText = s.view === "text" && s.textMsg.trim().length > 0;
+    if (hasAudio || hasText) { this.setState({ confirmDiscard: hasAudio ? "voice" : "text" }); return; }
+    this._stopRecording();
+    this.closeSheet();
   }
 
   sendTalkback() {
@@ -1099,6 +1163,12 @@ class Component extends DCLogic {
   openRecorder() {
     this.discardVoiceRec();
     this.setState({ view: "recorder", voiceRec: "idle" });
+  }
+
+  closeSheet() {
+    if (this.state.sheetClosing) return;
+    this.setState({ sheetClosing: true, notifModal: false });
+    setTimeout(() => this.setState({ ...this.resetFlow(), screen: "station", sheetClosing: false }), 340);
   }
 
   resetFlow() {
@@ -1166,10 +1236,24 @@ class Component extends DCLogic {
       prefill: () => this.setState((st) => ({ contact: { phone: st.contact.phone || "(212) 555-0147", first: st.contact.first || "Jordan", last: st.contact.last || "Lee" } })),
     });
     const hasText = s.textMsg.trim().length > 0;
-    const goStationFresh = () => this.setState({ ...this.resetFlow(), screen: "station", notifModal: false });
+    const goStationFresh = () => this.closeSheet();
+    const sheetFull = true; // every Talkback screen is a full-height cover that slides up
+    const ease = "cubic-bezier(.22,1,.36,1)";
 
     return {
-      isStation: s.screen === "station",
+      showStation: s.screen === "station" || s.screen === "talkback",
+      showGrabber: !sheetFull,
+      closeSheet: () => this.closeSheet(),
+      closeFlow: (e) => { if (e && e.preventDefault) e.preventDefault(); this.closeFlow(); },
+      showDiscard: !!s.confirmDiscard,
+      discardBody: s.confirmDiscard === "text" ? "Your text message will be deleted." : "Your recording will be deleted.",
+      keepMessage: () => this.setState({ confirmDiscard: null }),
+      discardMessage: () => { const k = s.confirmDiscard; this.setState({ confirmDiscard: null }); if (k === "voice") this.closeRecorder(); else this.setState({ textMsg: "", view: "intro" }); },
+      backFromText: () => this.backFromText(),
+      backFromRecorder: (e) => { if (e && e.preventDefault) e.preventDefault(); this.backFromRecorder(); },
+      scrimTap: () => { if (s.view === "intro") this.closeSheet(); },
+      scrimStyle: { position: "absolute", inset: 0, background: "rgba(0,0,0,0.45)", opacity: s.sheetClosing ? 0 : 1, transition: "opacity .3s ease", animation: "tbScrimIn .3s ease" },
+      sheetStyle: { position: "absolute", left: 0, right: 0, bottom: 0, top: sheetFull ? "0px" : "54px", borderRadius: sheetFull ? "0px" : "12px 12px 0 0", overflow: "hidden", display: "flex", flexDirection: "column", transform: s.sheetClosing ? "translateY(100%)" : "translateY(0)", transition: "top .38s " + ease + ", border-radius .38s " + ease + ", transform .34s " + ease, animation: "tbSheetUp .38s " + ease },
       isTalkback: s.screen === "talkback",
       isStationTab: s.stationTab === "station",
       isNowPlaying: s.stationTab === "nowplaying",
