@@ -1139,6 +1139,8 @@ class Component extends DCLogic {
   }
 
   sendTalkback() {
+    // Station audio keeps playing on the intro and through Send Text; it stops once voice is chosen.
+    this.stopStation();
     if (this.state.micGranted) { this.openRecorder(); return; }
     const md = navigator.mediaDevices;
     if (!(md && md.getUserMedia)) { this.setState({ showMicPrompt: true }); return; }
@@ -1268,7 +1270,7 @@ class Component extends DCLogic {
       setNowPlaying: () => this.setState({ stationTab: "nowplaying" }),
       setStationTab: () => this.setState({ stationTab: "station" }),
       setContestsTab: () => this.setState({ stationTab: "contests" }),
-      goTalkback: () => { this.stopStation(); this.setState({ ...this.resetFlow(), screen: "talkback" }); },
+      goTalkback: () => this.setState({ ...this.resetFlow(), screen: "talkback" }),
       goStation: goStationFresh,
       showSnack: s.showSnack === true,
 
