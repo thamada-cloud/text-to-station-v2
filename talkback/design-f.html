@@ -947,17 +947,8 @@ class Component extends DCLogic {
     this._vCtx = null; this._vAnalyser = null; this._vStream = null;
     try { if (this._vURL) URL.revokeObjectURL(this._vURL); } catch (e) {}
     this._vURL = null; this._vLevels = [];
-    this.setState({ voiceRec: "countdown", vCountdown: 3, vPlaying: false, vSeconds: 0 });
-    this._cdTimer = setInterval(() => {
-      let done = false;
-      this.setState((st) => {
-        const n = (st.vCountdown || 0) - 1;
-        if (n <= 0) { done = true; return { vCountdown: 0 }; }
-        return { vCountdown: n };
-      }, () => {
-        if (done && this._cdTimer) { clearInterval(this._cdTimer); this._cdTimer = null; this._beginVoiceRec(); }
-      });
-    }, 1000);
+    this.setState({ vPlaying: false, vSeconds: 0 });
+    this._beginVoiceRec();
   }
 
   _beginVoiceRec() {
