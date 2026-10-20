@@ -583,10 +583,11 @@
           <p style="position:absolute; top:28px; left:56px; right:56px; margin:0; text-align:center; font-weight:600; font-size:18px; line-height:24px; letter-spacing:-0.5px; color:#fff; pointer-events:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Voice Message</p>
           <div style="position:absolute; left:50%; top:calc(50% + 30px); transform:translate(-50%,-50%); width:295px; display:flex; flex-direction:column; align-items:center; gap:24px;">
             <canvas ref="{{ vIdleCanvasRef }}" width="528" height="84" style="width:264px; height:42px;"></canvas>
-            <div style="height:36px; display:flex; align-items:center; justify-content:center;"><p style="margin:0; font-size:16px; line-height:18px; color:#fff; text-align:center;">Tap to record and send a message to<br><span style="font-weight:600;">Z100</span></p></div>
+            <div style="height:36px; display:flex; align-items:center; justify-content:center;"><p style="margin:0; font-size:16px; line-height:18px; color:#fff; text-align:center;">Send a message to <span style="font-weight:600;">Z100</span></p></div>
           </div>
-          <div style="position:absolute; left:0; right:0; bottom:88px; display:flex; justify-content:center;">
+          <div style="position:absolute; left:0; right:0; bottom:58px; display:flex; flex-direction:column; align-items:center; gap:10px;">
             <div onMouseDown="{{ startVoiceRec }}" style="width:64px; height:64px; cursor:pointer;"><svg width="64" height="64" viewBox="0 0 64 64" fill="none"><g id="record_circle"><path id="stop circle" fill-rule="evenodd" clip-rule="evenodd" d="M32 64C49.6731 64 64 49.6731 64 32C64 14.3269 49.6731 0 32 0C14.3269 0 0 14.3269 0 32C0 49.6731 14.3269 64 32 64Z" fill="white"/><path id="stop circle_2" fill-rule="evenodd" clip-rule="evenodd" d="M39.6667 23H26.3333C24.5 23 23 24.5 23 26.3333V39.6667C23 41.5 24.5 43 26.3333 43H39.6667C41.5 43 43 41.5 43 39.6667V26.3333C43 24.5 41.5 23 39.6667 23Z" fill="white"/><circle id="Ellipse 14" cx="32" cy="32" r="10" fill="#C6002B"/></g></svg></div>
+            <p style="margin:0; font-size:14px; line-height:20px; font-weight:600; color:#fff;">Tap to record</p>
           </div>
         </div>
         </sc-if>
@@ -923,7 +924,7 @@ class Component extends DCLogic {
     this.applyAccent();
     this.hydrateImgs();
     if (this.state.voiceRec === "countdown" && this.vCountdownCanvasRef.current) { this._vDrawStatic(this.vCountdownCanvasRef.current, 1, true); }
-    if (this.state.voiceRec === "idle" && this.vIdleCanvasRef.current) { this._vDrawStatic(this.vIdleCanvasRef.current, 1, true, true); }
+    if (this.state.voiceRec === "idle" && this.vIdleCanvasRef.current) { this._vDrawStatic(this.vIdleCanvasRef.current, -1, false, false); }
     const el = this.chatRef.current;
     if (el) el.scrollTop = el.scrollHeight;
   }
