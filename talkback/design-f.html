@@ -903,6 +903,7 @@ class Component extends DCLogic {
 
   componentDidMount() {
     this.applyAccent();
+    this._loadHlsJs();
     this.hydrateImgs();
     this._vvHandler = () => this.syncViewport();
     this.syncViewport();
@@ -919,7 +920,7 @@ class Component extends DCLogic {
       window.visualViewport.removeEventListener("scroll", this._vvHandler);
     }
     window.removeEventListener("resize", this._vvHandler);
-    if (this._npTimer) clearInterval(this._npTimer);
+    try { if (this._hls) this._hls.destroy(); } catch (e) {}
   }
 
   componentDidUpdate() {
@@ -1037,47 +1038,80 @@ class Component extends DCLogic {
     this.setState({ voiceRec: "recorded" }, () => { this._vDrawStatic(this.vRecordedCanvasRef.current, 1, true); });
   }
 
-  // Play streams Z100 live from iHeart's stream. Stop ends the stream, so
-  // play again picks up live rather than where it left off.
+  // Play streams Z100 live. It plays Z100's HLS stream through hls.js, because
+  // every HLS segment is tagged with the song or ad in it, so Now Playing can
+  // follow exactly what is being heard. Stop ends the stream, and play again
+  // picks up live rather than where it left off.
   toggleStation() {
     if (this.state.stationPlaying) { this.stopStation(); return; }
-    try {
-      if (!this._stationAudio) {
-        this._stationAudio = new Audio();
-        this._stationAudio.onerror = () => { if (this._stationAudio && this._stationAudio.getAttribute("src")) this.stopStation(); };
+    if (!this._stationAudio) {
+      this._stationAudio = new Audio();
+      // iPhone Safari only lets hls.js stream through ManagedMediaSource when AirPlay is off for the element.
+      this._stationAudio.disableRemotePlayback = true;
+      this._stationAudio.onerror = () => { if (this._stationAudio && this._stationAudio.getAttribute("src")) this.stopStation(); };
+    }
+    const audio = this._stationAudio;
+    const HLS = "https://stream.revma.ihrhls.com/zc1469/hls.m3u8";
+    this._stationOn = true;
+    this.setState({ stationPlaying: true, np: null });
+    const start = (Hls) => {
+      if (!this._stationOn) return;
+      if (Hls && Hls.isSupported()) {
+        const hls = new Hls();
+        this._hls = hls;
+        hls.on(Hls.Events.FRAG_CHANGED, (e, d) => this._applyStreamTag(d && d.frag && d.frag.title));
+        hls.on(Hls.Events.ERROR, (e, d) => { if (d && d.fatal) this.stopStation(); });
+        hls.attachMedia(audio);
+        hls.loadSource(HLS);
+      } else {
+        // No hls.js: plain stream, which carries no song tags, so Now Playing stays on Z100.
+        audio.src = audio.canPlayType("application/vnd.apple.mpegurl") ? HLS : "https://stream.revma.ihrhls.com/zc1469";
       }
-      this._stationAudio.src = "https://stream.revma.ihrhls.com/zc1469";
-      this._stationAudio.play().catch(() => this.stopStation());
-      this.setState({ stationPlaying: true });
-      this._fetchNowPlaying();
-      if (this._npTimer) clearInterval(this._npTimer);
-      this._npTimer = setInterval(() => this._fetchNowPlaying(), 15000);
-    } catch (e) {}
+      audio.play().catch((err) => { if (err && err.name === "NotAllowedError") this.stopStation(); });
+    };
+    // hls.js is loaded when the page opens, so this normally starts inside the tap.
+    if (this._hlsJsReady) start(window.Hls); else this._loadHlsJs().then(start);
+  }
+
+  _loadHlsJs() {
+    if (window.Hls) { this._hlsJsReady = true; return Promise.resolve(window.Hls); }
+    if (!this._hlsJsLoading) {
+      this._hlsJsLoading = new Promise((resolve) => {
+        const sc = document.createElement("script");
+        sc.src = "https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.20/hls.min.js";
+        sc.onload = () => { this._hlsJsReady = true; resolve(window.Hls || null); };
+        sc.onerror = () => { this._hlsJsReady = true; resolve(null); };
+        document.head.appendChild(sc);
+      });
+    }
+    return this._hlsJsLoading;
+  }
+
+  // A segment tag looks like: title="...",artist="...",url="song_spot=\"M\" ... TPID=\"332448851\" amgArtworkURL=\"https://...\" ..."
+  // Songs carry a track ID (TPID). Ads, traffic and station jingles have TPID 0.
+  // Songs show their title, artist and art. Everything else shows Z100 itself.
+  _applyStreamTag(tag) {
+    if (!this._stationOn) return;
+    tag = tag || "";
+    const field = (name) => { const m = tag.match(new RegExp(name + '="([^"]*)"')); return m ? m[1] : ""; };
+    const title = field("title");
+    let artist = field("artist").trim();
+    const tpid = (tag.match(/TPID=\\?"(\d+)/) || [])[1];
+    const isSong = !!artist && !!tpid && tpid !== "0";
+    if (artist === artist.toUpperCase()) artist = artist.toLowerCase().replace(/(^|[\s(&\-\/])([a-z])/g, (m, p, c) => p + c.toUpperCase());
+    let img = "";
+    const art = tag.match(/amgArtworkURL=\\?"([^"\\]*)/);
+    if (art && art[1] && art[1] !== "null") img = art[1].replace(/fit\(\d+,\d+\)/, "fit(800,800)");
+    const np = isSong && title ? { title, artist, img } : null;
+    const cur = this.state.np;
+    if ((cur && cur.title) !== (np && np.title) || (cur && cur.artist) !== (np && np.artist)) this.setState({ np });
   }
 
   stopStation() {
+    this._stationOn = false;
+    try { if (this._hls) { this._hls.destroy(); this._hls = null; } } catch (e) {}
     try { if (this._stationAudio) { this._stationAudio.pause(); this._stationAudio.removeAttribute("src"); this._stationAudio.load(); } } catch (e) {}
-    if (this._npTimer) { clearInterval(this._npTimer); this._npTimer = null; }
     this.setState({ stationPlaying: false, np: null });
-  }
-
-  // While Z100 plays, Now Playing shows the song on air, from iHeart's public
-  // track history for Z100. Between songs (talk, ads) and when stopped it
-  // shows Z100 itself.
-  _fetchNowPlaying() {
-    fetch("https://us.api.iheart.com/api/v3/live-meta/stream/1469/trackHistory?limit=1")
-      .then((r) => r.json())
-      .then((j) => {
-        if (!this.state.stationPlaying) return;
-        const t = j && j.data && j.data[0];
-        // The stream runs a little behind real time, so allow some grace after the song's end.
-        const onAir = t && t.endTime && t.endTime * 1000 + 30000 > Date.now();
-        // Album art comes through iHeart's image resizer, since the originals can be several megabytes.
-        let img = "";
-        try { if (t && t.imagePath) img = "https://i.iheart.com/v3/url/" + btoa(t.imagePath.replace(/^http:/, "https:")).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "") + "?ops=fit(800,800)"; } catch (e) {}
-        this.setState({ np: onAir ? { title: t.title, artist: t.artist, img } : null });
-      })
-      .catch(() => {});
   }
 
   playVoiceRec() {
